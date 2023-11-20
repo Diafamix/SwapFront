@@ -13,25 +13,30 @@ const updated = new Map();
 const Coin = ({ coin }) => {
   const [history, setHistory] = useState([]);
   const [value, setValue] = useState(null);
-  const [lastValue, setLasValue] = useState(0);
+  const [lastValue, setLastValue] = useState(0);
 
-  const basePrice = coin.priceUsd / Math.abs(coin.changePercent24Hr);
+  const basePrice = coin.marketData.current_price / Math.abs(coin.marketData.market_cap_change_percentage_24h);
 
   const calculateActualChangePercent = () => {
     let aux = value / basePrice;
 
-    return (coin.changePercent24Hr) ? aux.toFixed(5) :  aux.toFixed(5) * -1;
+    return (coin.marketData.market_cap_change_percentage_24h) ? aux.toFixed(5) : aux.toFixed(5) * -1;
   }
 
   const getChangePercent = () => {
-    return value ? calculateActualChangePercent() : coin.changePercent24Hr;
+    return value ? calculateActualChangePercent() : coin.marketData.market_cap_change_percentage_24h;
   }
 
   const getData = async () => {
-    const res = await axios.get(
-      "https://api.coincap.io/v2/assets/" + coin.name + "/history?interval=d1"
-    );
-    setHistory(res.data);
+    axios.get(
+      "http://localhost:8080/api/assets/getHistory?id=" + coin.id + "&vs_currency=usd&days=7", {
+      headers: { "Access-Control-Allow-Origin": "*" },
+      auth: { username: "sergio.bernal", password: "1234" },
+    }
+    ).then((res) => {
+      console.log(res.data)
+      setHistory(res.data);
+    })
   };
 
   useEffect(() => {
@@ -40,20 +45,19 @@ const Coin = ({ coin }) => {
     const socket = SockJS('http://localhost:8080/wss');
     const stompClient = Stomp.over(socket);
     stompClient.connect({}, () => {
-      stompClient.subscribe('/crypto/' + coin.name, (data) => {
+      stompClient.subscribe('/crypto/' + coin.id, (data) => {
         let json = JSON.parse(data.body);
-        setLasValue(value)
-        setValue(json.price)
+        setValue(prevState => {
+          setLastValue(prevState)
+          return json.price
+        })
       });
-    });
+    }); 
 
     return () => stompClient.disconnect(() => { })
   }, []);
 
-  let symbol = coin.symbol.toUpperCase();
   let actualChange24 = getChangePercent();
-  
-  console.log(lastValue)
 
   return (
     <Wrapper>
@@ -62,10 +66,10 @@ const Coin = ({ coin }) => {
         <div style={{ flex: 1.4 }}>
           <NameCol>
             <CoinIcon>
-              <img src={coin.logo} alt={coin.id} />
+              <img src={coin.marketData.image} alt={coin.id} />
             </CoinIcon>
             <div>
-              <Primary>{symbol}</Primary>
+              <Primary>{coin.symbol}</Primary>
               <Secondary>{coin.name}</Secondary>
             </div>
           </NameCol>
@@ -73,11 +77,11 @@ const Coin = ({ coin }) => {
         <div style={{ flex: 2 }}>
           <Primary>
             <NumberFormat
-              value={value === null ? coin.priceUsd : value}
+              value={value === null ? coin.marketData.current_price : value}
               displayType={"text"}
               thousandSeparator={true}
               prefix={"$"}
-              key={Math.random()} 
+              key={Math.random()}
               className={value >= lastValue ? "upAnimationContainer" : "downAnimationContainer"}
             />
           </Primary>
@@ -93,7 +97,7 @@ const Coin = ({ coin }) => {
         </div>
         <div style={{ flex: 2 }}>
           <NumberFormat
-            value={coin.marketCapUsd}
+            value={coin.marketData.market_cap}
             displayType={"text"}
             thousandSeparator={true}
             prefix={"$"}
