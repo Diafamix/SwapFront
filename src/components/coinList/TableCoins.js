@@ -7,8 +7,8 @@ import { useState, useEffect } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { blue, red } from "@mui/material/colors";
 import Button from "@mui/material/Button";
-import LinearProgress from '@mui/material/LinearProgress';
-import Box from '@mui/material/Box';
+import LinearProgress from "@mui/material/LinearProgress";
+import Box from "@mui/material/Box";
 import { Navigate } from "react-router-dom";
 
 const limitPage = 9;
@@ -39,7 +39,7 @@ const theme = createTheme({
 });
 
 const TableCoins = ({ coins }) => {
-  const [status, setStatus] = useState([])
+  const [status, setStatus] = useState([]);
   const [items, setItems] = useState(null);
   const [page, setPage] = React.useState(1);
   const [click, setClicked] = useState(null);
@@ -49,9 +49,9 @@ const TableCoins = ({ coins }) => {
   let currentPage = 0;
 
   useEffect(() => {
-    console.log(coins)
-    setItems(coins.slice(0, limitPage))
-  }, [coins])
+    console.log(coins);
+    setItems(coins.slice(0, limitPage));
+  }, [coins]);
 
   const handlePageClick = async (event, value) => {
     console.log(value);
@@ -59,13 +59,16 @@ const TableCoins = ({ coins }) => {
     setPage(value);
 
     setItems(
-      coins.slice(currentPage * limitPage, Math.min(currentPage * limitPage + limitPage), totalSize)
+      coins.slice(
+        currentPage * limitPage,
+        Math.min(currentPage * limitPage + limitPage),
+        totalSize
+      )
     );
-
   };
 
   if (click) {
-    return <Navigate to={"/coinInfo/" + click.name}></Navigate>
+    return <Navigate to={"/coinInfo/" + click.id}></Navigate>
 }
 
   return (
@@ -78,24 +81,25 @@ const TableCoins = ({ coins }) => {
               <TableRow>
                 <div style={{ flex: 2 }}>Name</div>
                 <div style={{ flex: 2 }}>Price</div>
-                <div style={{ flex: 2 }}>Cap. Mercado</div>
+                <div style={{ flex: 2 }}>Cap.Market</div>
                 <div style={{ flex: 2 }}>Last 7 days</div>
                 <div style={{ flex: 0, color: "#0a0b0d" }}></div>
               </TableRow>
             </TableItem>
             <Divider />
             <div>
-              {totalSize === 0 ?
-                <Box sx={{ width: '100%' }}>
+              {totalSize === 0 ? (
+                <Box sx={{ width: "100%" }}>
                   <LinearProgress />
-                </Box> :
+                </Box>
+              ) : (
                 items.map((coin) => (
-                  <div key={coin.name} onClick={() => setClicked(coin)}>
+                  <div key={coin.id} onClick={() => setClicked(coin)}>
                       <Coin coin={coin} />
                     <Divider />
                   </div>
-
-                ))}
+                ))
+              )}
             </div>
           </Table>
         </PortfolioTable>
