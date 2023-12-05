@@ -1,0 +1,10 @@
+.ant-form-item-label > label {
+    color: white;
+}
+
+.ant-checbox-wrapper {
+    color: white;
+}
+.ant-checkbox + span {
+    color: white;
+}
