@@ -149,4 +149,5 @@ export const AccountProfileDetails = (props) => {
       </Card>
     </form>
   );
+  
 };

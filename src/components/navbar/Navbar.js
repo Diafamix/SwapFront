@@ -83,7 +83,7 @@ const ResponsiveAppBar = () => {
               textDecoration: "none",
             }}
           >
-            Cryptonita
+            SwapCat
           </Typography>
           <Box
             sx={{

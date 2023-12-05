@@ -14,7 +14,6 @@ import {
 import Navbar from "../navbar/Navbar";
 import {
   Box,
-  Grid,
   Button,
   Checkbox,
   Container,
@@ -76,68 +75,70 @@ const theme = createTheme({
   },
 });
 
-const SignIn = () => {
+const Register = () => {
   const [password, setPassword] = React.useState("");
   const [leyenda, setLeyenda] = React.useState("");
   const [errorpassword, setErrorPassword] = React.useState(false);
   const [state, setState] = React.useState(false);
-  const [error, setError] = React.useState(undefined);
+  const [error, setError] = React.useState()
 
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
-      name: "",
+      email: "",
+      username: "",
       password: "",
+      policy: false,
     },
     validationSchema: Yup.object({
-      name: Yup.string()
+      email: Yup.string()
+        .email("Must be a valid email")
         .max(255)
-        .required("name is required"),
+        .required("Email is required"),
+      username: Yup.string()
+        .required("Username is required"),
       password: Yup.string()
         .required("Password is required"),
+      policy: Yup.boolean().oneOf([true], "This field must be checked"),
     }),
     onSubmit: values => {
       console.log(values);
-      sendLogin(values, () => settingError("Invalid login"));
+      sendRegistration(values);
     },
   });
 
-  const settingError = (msg) => {
-    setError(msg)
-    setTimeout(() => {
-        setError(undefined)
-    }, 5000);
-  }
-
-  const sendLogin = (values, errHandler) => {
-    console.log(values)
+  const sendRegistration = (values) => {
     axios
-      .get("http://localhost:8080/authentication/login", {
+      .post("http://localhost:8080/autentication/register", null, {
         //Test if the connection is established correctly
         headers: {
           "Access-Control-Allow-Origin": "*",
         },
-        params: { username: values.name, password: values.password }
+        params: { mail: values.email, username: values.username, password: values.password }
       })
       .then((data) => {
-        console.log(data.data.data)
-        console.log(data.data.data.result)
-        if (data.data.data.result === false) {
-          errHandler()
-          return;
-        }
-
-        sessionStorage.setItem("username", values.name);
-        sessionStorage.setItem("password", values.password);
-        console.log("successfully");
-        setState(true);
+        console.log(data)
+        if (data.data.status.error_message.length > 0) {
+          settingError(data.data.status.error_message)
+        } else
+          setState(true)
       })
-      .catch((e) => errHandler());
+      .catch((e) => {
+        console.log(e)
+        settingError(e.response.data.status.error_message)
+      }
+      );
   }
 
+  const settingError = (msg) => {
+    setError(msg)
+    setTimeout(() => {
+      setError(undefined)
+    }, 5000);
+  }
 
   if (state === true) {
-    return <Navigate to="/portfolio"></Navigate>
+    return <Navigate to="/login"></Navigate>
   }
 
   return (
@@ -156,37 +157,38 @@ const SignIn = () => {
           <Container maxWidth="sm">
             <form onSubmit={formik.handleSubmit}>
               <Box sx={{ my: 3, marginTop: "80px" }}>
-                <Typography
-                  variant="h3"
-                  fontFamily="Digitalism"
-                  noWrap
-                  component="a"
-                  href="/"
-                  sx={{
-                    flexGrow: 1,
-                    display: { xs: "none", md: "flex" },
-                    fontWeight: 700,
-                    letterSpacing: ".3rem",
-                    color: "inherit",
-                    textDecoration: "none",
-                    marginLeft: "160px"
-                  }}
-                >
-                  SwapCat
+                <Typography color="white" variant="h4">
+                  Create a new account
+                </Typography>
+                <Typography color="primary" gutterBottom variant="body2">
+                  Use your email to create a new account
                 </Typography>
               </Box>
               <CssTextField
                 error={Boolean(
-                  formik.touched.name && formik.errors.name
+                  formik.touched.username && formik.errors.username
                 )}
                 fullWidth
-                helperText={formik.touched.name && formik.errors.name}
-                label="name"
+                helperText={formik.touched.username && formik.errors.username}
+                label="Username"
                 margin="normal"
-                name="name"
+                name="username"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
-                value={formik.values.name}
+                value={formik.values.username}
+                variant="outlined"
+              />
+              <CssTextField
+                error={Boolean(formik.touched.email && formik.errors.email)}
+                fullWidth
+                helperText={formik.touched.email && formik.errors.email}
+                label="Email Address"
+                margin="normal"
+                name="email"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="email"
+                value={formik.values.email}
                 variant="outlined"
               />
               <CssTextField
@@ -211,13 +213,28 @@ const SignIn = () => {
                   ml: -1,
                 }}
               >
+                <Checkbox
+                  checked={formik.values.policy}
+                  name="policy"
+                  onChange={formik.handleChange}
+                />
+                <Typography color="white" variant="body2">
+                  I have read the{" "}
+                  <NextLink href="#" passHref>
+                    <Link
+                      color="primary"
+                      underline="always"
+                      variant="subtitle2"
+                    >
+                      Terms and Conditions
+                    </Link>
+                  </NextLink>
+                </Typography>
               </Box>
               {Boolean(formik.touched.policy && formik.errors.policy) && (
                 <FormHelperText error>{formik.errors.policy}</FormHelperText>
               )}
-              {error === undefined ? null :
-              <FormHelperText error>Invalid login</FormHelperText>
-              }
+              {!error ? null : <FormHelperText error>{error}</FormHelperText>}
               <Box sx={{ py: 2 }}>
                 <Button
                   color="primary"
@@ -230,18 +247,12 @@ const SignIn = () => {
                   Sign Up Now
                 </Button>
               </Box>
-              <Grid container>
-                <Grid item xs>
-                  <Link href="Retrieve" variant="body2">
-                    Forgot password?
-                  </Link>
-                </Grid>
-                <Grid item>
-                  <Link href="/Register" variant="body2">
-                    {"You don't have an account? Register"}
-                  </Link>
-                </Grid>
-              </Grid>
+              <Typography color="white" variant="body2">
+                Have an account?{" "}
+                <Link href="/Login" variant="subtitle2" underline="hover">
+                  Sign In
+                </Link>
+              </Typography>
             </form>
           </Container>
         </Box>
@@ -250,4 +261,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default Register;

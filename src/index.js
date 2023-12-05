@@ -4,6 +4,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import './index.css';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./components/Home";
+import Login from "./components/registration/Login";
+import RegisterPage from "./components/pages/RegisterPage";
+import Portfolio from "./components/portfolio/Portfolio";
+
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -12,6 +16,12 @@ root.render(
       <Routes> 
         <Route path="/" element={<Home />}></Route>
         <Route path="/Home" element={<Home />}></Route>
+        <Route path="/Portfolio" element={<Portfolio></Portfolio>} />
+
+
+
+        <Route path="/register" element={<RegisterPage/>}></Route>
+        <Route path="/login" element={<Login/>}></Route>
       </Routes>
   </BrowserRouter>
 );
