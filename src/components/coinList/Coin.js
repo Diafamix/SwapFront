@@ -31,7 +31,7 @@ const Coin = ({ coin }) => {
     axios.get(
       "http://localhost:8080/api/assets/getHistory?id=" + coin.id + "&vs_currency=usd&days=7", {
       headers: { "Access-Control-Allow-Origin": "*" },
-      auth: { username: "sergio.bernal", password: "1234" },
+      auth: { username: "carlos.cueva", password: "1234567" },
     }
     ).then((res) => {
       console.log(res.data)

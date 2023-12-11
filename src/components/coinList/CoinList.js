@@ -15,7 +15,7 @@ export default class Skills extends Component {
     axios
       .get("http://localhost:8080/api/markets", {
         headers: { "Access-Control-Allow-Origin": "*" },
-        auth: { username: "sergio.bernal", password: "1234" },
+        auth: { username: "carlos.cueva", password: "1234" },
       })
       .then((data) => {
         console.log(data.data);
