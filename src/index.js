@@ -5,6 +5,7 @@ import './index.css';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./components/Home";
 import Login from "./components/registration/Login";
+import CustomersPage from "./components/pages/CustomersPage";
 import RegisterPage from "./components/pages/RegisterPage";
 import Portfolio from "./components/portfolio/Portfolio";
 import LogOut from "./components/registration/LogOut";
@@ -19,7 +20,7 @@ root.render(
         <Route path="/Portfolio" element={<Portfolio></Portfolio>} />
 
 
-
+        <Route path="/History" element={<CustomersPage />}></Route>
         <Route path="/register" element={<RegisterPage/>}></Route>
         <Route path="/login" element={<Login/>}></Route>
         <Route path="/LogOut" element={<LogOut />} />

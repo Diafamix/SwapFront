@@ -1,22 +1,21 @@
-import { useState } from 'react'
-import styled from 'styled-components'
-import CoinbaseLogo from '../../assets/img/cb-logo.png'
+import { useState } from "react";
+import styled from "styled-components";
+import CoinbaseLogo from "../../assets/img/cb-logo.png";
 import { Link } from "react-router-dom";
 
-const navItems = ["Portfolio", "Swap"]
+const navItems = ["Portfolio", "Swap"];
 
 const Sidebar = () => {
-  const [activeIcon, setActiveIcon] = useState(navItems[0].title)
+  const [activeIcon, setActiveIcon] = useState(navItems[0].title);
 
   return (
     <Wrapper>
-      <LogoContainer>
-      </LogoContainer>
+      <LogoContainer></LogoContainer>
       <NavItemsContainer>
-        {navItems.map(item => (
+        {navItems.map((item) => (
           <Link to={`/${item}`}>
             <NavItem key={item} onClick={() => setActiveIcon(item)}>
-              <NavIcon style={{ color: item === activeIcon && '#3773f5' }}>
+              <NavIcon style={{ color: item === activeIcon && "#3773f5" }}>
                 {item.icon}
               </NavIcon>
               <NavTitle>{item}</NavTitle>
@@ -25,28 +24,27 @@ const Sidebar = () => {
         ))}
       </NavItemsContainer>
     </Wrapper>
-  )
-}
+  );
+};
 
-export default Sidebar
+export default Sidebar;
 
 const Wrapper = styled.div`
   height: calc(100vh);
   border-right: 1px solid #282b2f;
   width: calc(22rem - 16px - 16px);
-  /* TRouBLe */
+  margin-top: 50px;
   padding: 0 1rem;
-`
+`;
 const LogoContainer = styled.div`
-  /* TRouBLe */
   margin: 1.5rem 0;
-`
+`;
 
 const Logo = styled.div`
   width: 44%;
   object-fit: contain;
   margin-left: 1.5rem;
-`
+`;
 
 const NavItemsContainer = styled.div`
   margin-top: 3rem;
@@ -54,7 +52,7 @@ const NavItemsContainer = styled.div`
   &:hover {
     cursor: pointer;
   }
-`
+`;
 
 const NavItem = styled.div`
   display: flex;
@@ -68,7 +66,7 @@ const NavItem = styled.div`
   &:hover {
     background-color: #141519;
   }
-`
+`;
 
 const NavIcon = styled.div`
   background-color: #141519;
@@ -77,6 +75,6 @@ const NavIcon = styled.div`
   margin: 0 1rem;
   display: grid;
   place-items: center;
-`
+`;
 
-const NavTitle = styled.div``
+const NavTitle = styled.div``;
