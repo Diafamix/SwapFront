@@ -7,7 +7,7 @@ import Home from "./components/Home";
 import Login from "./components/registration/Login";
 import RegisterPage from "./components/pages/RegisterPage";
 import Portfolio from "./components/portfolio/Portfolio";
-
+import LogOut from "./components/registration/LogOut";
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -22,6 +22,7 @@ root.render(
 
         <Route path="/register" element={<RegisterPage/>}></Route>
         <Route path="/login" element={<Login/>}></Route>
+        <Route path="/LogOut" element={<LogOut />} />
       </Routes>
   </BrowserRouter>
 );
