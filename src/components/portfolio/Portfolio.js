@@ -8,6 +8,7 @@ import NumberFormat from "react-number-format";
 import LinearProgress from "@mui/material/LinearProgress";
 import { Navigate } from "react-router-dom";
 import Error from "../Error";
+import Navbar from "../navbar/Navbar";
 
 const Portfolio = () => {
   const [history, setHistory] = useState([]);
@@ -96,14 +97,18 @@ const Portfolio = () => {
             <div>
               <Balance>
                 <BalanceTitle>Portfolio balance</BalanceTitle>
-                <BalanceValue>{portfolio === null ? 0.0 :
-                  <NumberFormat
-                    value={portfolio.balance.toFixed(5)}
-                    displayType={"text"}
-                    thousandSeparator={true}
-                    prefix={"$"}
-                  />}
-                  </BalanceValue>
+                <BalanceValue>
+                  {portfolio === null ? (
+                    0.0
+                  ) : (
+                    <NumberFormat
+                      value={portfolio.balance.toFixed(5)}
+                      displayType={"text"}
+                      thousandSeparator={true}
+                      prefix={"$"}
+                    />
+                  )}
+                </BalanceValue>
               </Balance>
             </div>
             <MiniChart history={history} />
@@ -147,10 +152,14 @@ const Portfolio = () => {
                               </NameCol>
                             </div>
                           </div>
-                          <div style={{ flex: 1.7 }}>{coin.quantity.toFixed(4)}</div>
+                          <div style={{ flex: 1.7 }}>
+                            {coin.quantity.toFixed(4)}
+                          </div>
                           <div style={{ flex: 2 }}>
                             <NumberFormat
-                              value={(coin.quantity * coin.marketData.current_price).toFixed(3)}
+                              value={(
+                                coin.quantity * coin.marketData.current_price
+                              ).toFixed(3)}
                               displayType={"text"}
                               thousandSeparator={true}
                               prefix={"$"}
@@ -181,12 +190,12 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: center;
   height: 100%;
-  margin-top: 130px;
 `;
 const Content = styled.div`
   width: 100%;
   max-width: 1000px;
   padding: 2rem 1rem;
+  margin-top: 50px;
 `;
 
 const Chart = styled.div`
