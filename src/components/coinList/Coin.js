@@ -1,11 +1,11 @@
-import styled, { css, keyframes } from 'styled-components'
+import styled, { css, keyframes } from "styled-components";
 import MiniChart from "./MiniChart";
 import NumberFormat from "react-number-format";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import SockJS from 'sockjs-client';
-import Stomp from 'stompjs';
+import SockJS from "sockjs-client";
+import Stomp from "stompjs";
 // import Icon from 'react-crypto-icons'
 
 const updated = new Map();
@@ -15,46 +15,57 @@ const Coin = ({ coin }) => {
   const [value, setValue] = useState(null);
   const [lastValue, setLastValue] = useState(0);
 
-  const basePrice = coin.marketData.current_price / Math.abs(coin.marketData.market_cap_change_percentage_24h);
+  const basePrice =
+    coin.marketData.current_price /
+    Math.abs(coin.marketData.market_cap_change_percentage_24h);
 
   const calculateActualChangePercent = () => {
     let aux = value / basePrice;
 
-    return (coin.marketData.market_cap_change_percentage_24h) ? aux.toFixed(5) : aux.toFixed(5) * -1;
-  }
+    return coin.marketData.market_cap_change_percentage_24h
+      ? aux.toFixed(5)
+      : aux.toFixed(5) * -1;
+  };
 
   const getChangePercent = () => {
-    return value ? calculateActualChangePercent() : coin.marketData.market_cap_change_percentage_24h;
-  }
+    return value
+      ? calculateActualChangePercent()
+      : coin.marketData.market_cap_change_percentage_24h;
+  };
 
   const getData = async () => {
-    axios.get(
-      "http://localhost:8080/api/assets/getHistory?id=" + coin.id + "&vs_currency=usd&days=7", {
-      headers: { "Access-Control-Allow-Origin": "*" },
-      auth: { username: "sergio.bernal", password: "1234" },
-    }
-    ).then((res) => {
-      console.log(res.data)
-      setHistory(res.data);
-    })
+    axios
+      .get(
+        "http://localhost:8080/api/assets/getHistory?id=" +
+          coin.id +
+          "&vs_currency=usd&days=7",
+        {
+          headers: { "Access-Control-Allow-Origin": "*" },
+          auth: { username: "Front-admin", password: "1234" },
+        }
+      )
+      .then((res) => {
+        console.log(res.data);
+        setHistory(res.data);
+      });
   };
 
   useEffect(() => {
     getData();
 
-    const socket = SockJS('http://localhost:8080/wss');
+    const socket = SockJS("http://localhost:8080/wss");
     const stompClient = Stomp.over(socket);
     stompClient.connect({}, () => {
-      stompClient.subscribe('/crypto/' + coin.id, (data) => {
+      stompClient.subscribe("/crypto/" + coin.id, (data) => {
         let json = JSON.parse(data.body);
-        setValue(prevState => {
-          setLastValue(prevState)
-          return json.price
-        })
+        setValue((prevState) => {
+          setLastValue(prevState);
+          return json.price;
+        });
       });
-    }); 
+    });
 
-    return () => stompClient.disconnect(() => { })
+    return () => stompClient.disconnect(() => {});
   }, []);
 
   let actualChange24 = getChangePercent();
@@ -82,13 +93,16 @@ const Coin = ({ coin }) => {
               thousandSeparator={true}
               prefix={"$"}
               key={Math.random()}
-              className={value >= lastValue ? "upAnimationContainer" : "downAnimationContainer"}
+              className={
+                value >= lastValue
+                  ? "upAnimationContainer"
+                  : "downAnimationContainer"
+              }
             />
           </Primary>
           <div
             style={{
-              color:
-                actualChange24 < 0 ? "#f0616d" : "#26ad75",
+              color: actualChange24 < 0 ? "#f0616d" : "#26ad75",
             }}
           >
             {actualChange24 > 0 && "+"}
